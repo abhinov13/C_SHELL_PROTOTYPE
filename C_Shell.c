@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include<sys/wait.h>
+#include<readlines/readlines.h>
+#include<readlines/history.h>
 
 //MAX-SIZE DEFINITIONS
 #define BUFFERSIZE 1000
@@ -26,12 +29,22 @@ void clear()
 {
         printf("\033[H\033[J");
 }
-
+void Help()
+{
+	puts("\nThe World of Linux command Shell Interpreter Welcome You, Lets Enjoy the Help"
+		"\n List of the some of the command you find in the shell are listed: -------"
+		"\n cd "
+		"\n ls"
+		"\n clear"
+		"\n .............More on:");
+	return;
+}
 
 int main()
 {
         clear();
         print_declaration();
         print_preface();
+        Help();
         return 0;
 }
