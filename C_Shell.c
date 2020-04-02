@@ -3,12 +3,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 //MAX-SIZE DEFINITIONS
-#define BUFFERSIZE 1000
-#define MAXLIST 100
+#define MAX_PATH_SIZE 1000
+#define MAX_USERNAME_SIZE 100
+#define COMMAND_LIST_SIZE 50
 
-//CONSTANT DECLARATIONS
+//CONSTANT DECLARATION
 const char* declaration = "THE SHELL HAS STARTED";
 
 //FUNCTIONS
@@ -16,22 +20,49 @@ void print_declaration()
 {
         printf("%s\n",declaration);
 }
+void get_Path(char *path)
+{
+        getcwd(path,MAX_PATH_SIZE);
+}
+void get_User_Name(char *username)
+{
+        username = getenv("USER");
+}
 void print_preface()
 {
-        char directory_Address[BUFFERSIZE];
-        getcwd(directory_Address,BUFFERSIZE);
-        printf("%s:%s~$\n",getenv("USER"),directory_Address);
+        char username[MAX_USERNAME_SIZE];
+        char path[MAX_PATH_SIZE];
+        get_User_Name(username);
+        get_Path(path);
+        printf("%s:%s~$\n",username,path);
 }
-void clear()
+void execute_command(char *args[])
 {
-        printf("\033[H\033[J");
+        pid_t p1 = fork();
+        if(p1 != 0)
+        {
+                wait(NULL);
+        }
+        else
+        {
+                execvp(args[0],args);
+        }
 }
-
+void show_Command_List()
+{
+        printf("The supported commands are as following:\n");
+        ssize_t file = open("command_list.txt",O_RDONLY);
+        char file_Data[COMMAND_LIST_SIZE];
+        read(file,file_Data,COMMAND_LIST_SIZE);
+        printf("%s\n",file_Data);
+}
 
 int main()
 {
-        clear();
+        char *args[] = {"./clear.out",NULL};
+        execute_command(args);
         print_declaration();
         print_preface();
+        show_Command_List();
         return 0;
 }
