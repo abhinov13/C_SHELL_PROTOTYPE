@@ -82,6 +82,12 @@ void start_process(int number_of_segments,char* parsed_command[MAX_COMMAND_LIST_
         int i = 0;
         int input_file_descriptor = 0;
         int pipeline[2];
+        int save_stdin_state,save_stdout_state;
+        if(number_of_segments > 1)
+        {
+                save_stdin_state = dup(0);
+                save_stdout_state = dup(1);
+        }
         while(i+1 != number_of_segments)
         {
                 printf("i is %d\n",i );
@@ -102,6 +108,11 @@ void start_process(int number_of_segments,char* parsed_command[MAX_COMMAND_LIST_
                 close(input_file_descriptor);
         }
         execute_command(parsed_command[i]);
+        if(number_of_segments > 1)
+        {
+                dup2(save_stdin_state,0);
+                dup2(save_stdout_state,1);
+        }
 }
 void show_Command_List()
 {
